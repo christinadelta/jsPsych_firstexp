@@ -1,0 +1,159 @@
+<!-- Part 1. Init html file
+First I need to create a blank experiment using HTML. This will include adding the keyborad response plugin
+and it will be used as a starting point -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rts Simple Experiment</title>
+
+        <!-- preload the plugins needed for the experiment -->
+        <script src="jspsych/jspsych.js"></script>
+        <script src="jspsych/plugin-html-keyboard-response.js"></script>
+        <script src="jspsych/plugin-image-keyboard-response.js"></script>
+        <script src="jspsych/plugin-preload.js"></script>
+        <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body></body>
+    <!-- first add a <script> tag; this means that anything writen inside the tag will be coded in JS -->
+    <script>
+        /* Part 2. Init jsPsych
+        In this part I'll desplay welcome message. First initialise js psych using var instead of const */
+        var jsPsych = initJsPsych();
+
+        /* All js experiments are defined by a timeline. Timeline is a list (or array) that contains the set 
+        of trials that we want to run. I will create an empty list, and will add trials as I create them */
+        var timeline = [];
+
+        // pleload the stimuli
+        var preload = {
+            type: jsPsychPreload,
+            images: ['stimuli/blue.png', 'stimuli/orange.png']
+        };
+
+        // push the ploaded object to the timeline 
+        timeline.push(preload);
+
+        /* Part 3. Display welcome message 
+        This will be the first trial of the experiment. The way I see it is that the timeline is like the routine part in 
+        psychopy builder. I will use the html-keyboard-response plugin on this trial. Every trial object has a time 
+        and a stimulus. I think of thsese objects as python dict where you need to add a key and a value. The type
+        parameter corresponds to the plugin of that trial obejct. */ 
+        
+        var welcome_screen = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: "welcome to the experiment, press any key to begin."
+        };
+
+        // Now that the first trial is created, I just need to push it to the timeline 
+        timeline.push(welcome_screen);
+
+        // now I just need to tell to js to run the trial using the jsPsych.run() function and passing the timeline as input
+        // jsPsych.run(timeline);
+
+        // Part 4. Show instructions 
+        /* I will use a simialr structure as in part 2 to create and show the instrcutions screen. 
+        The idea is to create a new trial that I will then push to the timeline and run the jsPysch object. To create 
+        the instructions object, I will use HTML formating as suggested by the jsPsych developers. */
+
+        var instructions = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: "the instructions go here",
+            post_trial_gap: 2000
+        };
+
+        // now I need to push the trial to the timeline 
+        timeline.push(instructions);
+
+        // test it by running
+        // jsPsych.run(timeline); 
+
+        /* Part 5. Display stimuli and get responses 
+        creating trial objects that will present the stimuli are conceptually similar to instruction objects, except 
+        that now we are displaying images instead of text.
+        For now I'll just show each image once. The path to the image file is set similarly as for python.. 
+        Now I'll create stimuli objects and add the response choices
+         */ 
+        /*
+        var blue_trial = {
+            type: jsPsychImageKeyboardResponse,
+            stimulus: 'stimuli/blue.png',
+            choices: ['f', 'j']
+
+        };
+
+        var orange_trial = {
+            type: jsPsychImageKeyboardResponse,
+            stimulus: 'stimuli/orange.png',
+            choices: ['f', 'j']
+        };
+
+        // let's add the objects to the timeline 
+        timeline.push(blue_trial, orange_trial);
+
+        // run the experiment
+        jsPsych.run(timeline);
+
+        // Part 6. Timeline variables
+        // In the experiment I need more trials. One way to add more trials is by using timeline variables.
+        // The parameteres for each condition (blue or orange image) are very similar, so, timeline variables allow us 
+        // to define the procedure for displaying the stimuli once and then repeatedly use it with different variables.
+        
+        // To start, I create an array/list that conatins the different conditions (blue and orange trials) */
+        var test_stimuli = [
+            {stimulus: "stimuli/blue.png"},
+            {stimulus: "stimuli/orange.png"}
+        ];
+
+        // also, create a fixation point to display before the actual stimulus
+        // we will define a fixation object that will contain all the parameters of the fixation point 
+        var fixation = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '<div style="font-size:60px;">+</div>',
+            choices: "NO_KEYS",
+            trial_duration: 1000
+
+        };
+
+        // to show the images I will create anothe object/trial and I'll use another function: jsPsych.timelineVariable()
+        // to indicate that we want jsPsych to substitute the value of the parameter from the timeline variables.
+        var test = {
+            type: jsPsychImageKeyboardResponse,
+            stimulus: jsPsych.timelineVariable('stimulus'),
+            choices: ['f', 'j']
+        };
+
+        // to link the variables/conditions defined in the test_stimuli array using the jsPsych.timelineVariable() function, 
+        // a new timeline is needed. 
+        /*
+        var test_procedure = {
+            timeline: [fixation, test],
+            timeline_variables: test_stimuli
+
+        }; */
+
+        // now that everything is inside the test_procedure object, now it needs to be pushed to the main timeline  
+        // timeline.push(test_procedure);
+
+        // run the experiment
+        // jsPsych.run(timeline);
+
+        /* Part 7. Add various parameters with Timeline variables 
+        Now the experiment is two trials long presented with the same order every time. With timelines we can get access
+        to methods that allow us to randomize the order and add repetition number */
+        var test_procedure = {
+            timeline: [fixation, test],
+            timeline_variables: test_stimuli,
+            randomize_order: true,
+            repetitions: 5
+
+        };
+
+        // now that everything is inside the test_procedure object, it needs to be pushed to the main timeline  
+        timeline.push(test_procedure);
+
+        // run the experiment
+        jsPsych.run(timeline);
+        
+    </script>
+</html>
